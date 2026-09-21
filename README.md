@@ -68,13 +68,3 @@ past the end of `.rodata`. The loader zero-fills that space, so the change silen
 does nothing — no crash, no items. pk3DS assumes you will rebuild the ROM, where it
 also grows the section in the exheader; an IPS over LayeredFS cannot touch the
 exheader. In-place edits are fine. Rebuild the ROM for release.
-
-## Verified
-
-Produces byte-identical output to a hand-built 18-mega set, across all four form
-archives, the item archive and the text archive. The underlying method is confirmed
-in game: a Mega Beedrill on appended slot 799 mega-evolved with correct typing, and
-at level 10 outspoke a level 36 Klefki — base Speed 145 from the appended record.
-
-Emulator-tested only (Azahar). Real hardware additionally needs CFW with signature
-patches.
