@@ -212,13 +212,15 @@ def main():
     save(a.out, XY_ITEMS,    garcw.build(gi))
 
     # ---- item text, into every language slot ----
-    src_text = None
-    for rel in XY_TEXT_SLOTS:
-        if os.path.isfile(os.path.join(a.xy, rel)):
-            src_text = load(a.xy, rel); break
-    if src_text is None:
-        print("! no text archive found — stones will be unnamed")
-    else:
+    # Each slot is a DIFFERENT language (vanilla: 2 JPN kana, 3 JPN kanji, 4 EN,
+    # 5 FR, 6 IT, 7 DE, 8 ES, 9 KO). Every slot is read, extended and written back
+    # on its own -- an earlier version loaded the first slot found and wrote it
+    # into all eight, which on an unmodified romfs turned every language Japanese.
+    found = [rel for rel in XY_TEXT_SLOTS if os.path.isfile(os.path.join(a.xy, rel))]
+    if not found:
+        print("! no text archive found - stones will be unnamed")
+    for rel in found:
+        src_text = load(a.xy, rel)
         fs = blobs(src_text); new = list(fs)
         for fi in ITEM_TEXT_SUBFILES:
             t = text_parse(fs[fi])
@@ -235,9 +237,7 @@ def main():
                 t["ents"].append([text_encode(tok, i), 0])
             new[fi] = text_build(t)
         g2 = dict(src_text); g2["entries"] = [(1, [(0, b, len(b))]) for b in new]
-        out = garcw.build(g2)
-        for rel in XY_TEXT_SLOTS:
-            save(a.out, rel, out)
+        save(a.out, rel, garcw.build(g2))
 
     print("\nwrote %s" % a.out)
     print("personal %d records | items %d" % (len(xR), len(gi["entries"])))
